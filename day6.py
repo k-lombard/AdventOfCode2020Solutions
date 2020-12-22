@@ -37,9 +37,27 @@ def sol1(adict):
             total += 1
     
     return total
+
+
+def sol2(adict):
+    total = 0
+    for key in adict:
+        answer_dict = {}
+        for item in adict[key]:
+            for letter in item:
+                if letter not in answer_dict:
+                    answer_dict[letter] = 1
+                else:
+                    answer_dict[letter] += 1
+        for letter in answer_dict:
+            if answer_dict[letter] == len(adict[key]):
+                total += 1
+    return total
         
 
 
 
 #part 1
 print(sol1(make_dict(file_input())))
+#part 2
+print(sol2(make_dict(file_input())))
