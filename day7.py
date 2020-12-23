@@ -10,6 +10,16 @@ def file_input():
 
 
 
+def file_input3():
+    file = open("bagception.txt")
+
+    bags = []
+    for line in file:
+        bags.append(line.strip())
+    return bags
+
+
+
 def bag_map(bags):
     adict = {}
     for line in bags:
@@ -100,34 +110,45 @@ def build_tree(root, adict, templist):
 
 def build_tree2(root, adict, templist):
     for item in adict[root.data]:
-        if item[0] in "1234567890":
-            print(int(item[0]))
-            temp = Node2(item[1:], int(item[0]))
-        else:
-            temp = Node2(item[1:], 1) 
-        root.children.append(temp)
-    
+        if item != "noother":
+            if item[0] in "1234567890":
+                 temp = Node2(item[1:], int(item[0]))
+            else:
+                 temp = Node2(item, 1) 
+            root.children.append(temp)
+
+            
+        
     for node in root.children:
         templist.append(node)
-        build_tree(node, adict, templist)
-    
+        build_tree2(node, adict, templist)
 
 
-def dfs(root, prev):
-    count[root] = 1
+def dfs2(root, prev):
     count2[root] = root.amount
     for child in root.children:
         if child == prev:
             continue
         dfs(child, root)
+        count2[root] += root.amount + root.amount*child.amount
+    
+
+
+def dfs(root, prev):
+    count[root] = 1
+    
+    for child in root.children:
+        if child == prev:
+            continue
+        dfs(child, root)
         count[root] += count[child]
-        count2[root] += root.amount * child.amount
+        
         
 
 
 def count_list(templist):
     newlist = []
-
+ 
     for item in templist:
         if item not in newlist:
             newlist.append(item)
@@ -135,39 +156,47 @@ def count_list(templist):
     return len(newlist)
 
 
-def sum_tree(root):
-    if len(root.children) == 0:
-        return 0
-    for node in root.children:
-        return (root.amount + root.amount*node.amount) + sum_tree(node)
+
+
+def count_bags(root2):
+    num = 0
+    bag = root2.children
+    for child in bag:
+        num += child.amount + child.amount*count_bags(child)
+    return num
 
 
 
-
-
-    
-
-
-
-
-root = Node2("shinygold", 1)
+#part 1
+root = Node("shinygold")
 count = {}
 count2 = {}
 templist = []
-build_tree2(root, bag_map_nums(file_input()), templist)
+build_tree(root, bag_map(file_input()), templist)
 dfs(root, None)
+print(count_list(templist))
 
 
-#print(count_list(templist))
-#print(bag_map_nums(file_input()))
-#print(count2[root])
 
-#print(sum_tree(root))
-dict1 = bag_map_nums(file_input())
-print(dict1[root.data])
+#part 2
+templist2 = []
+root2 = Node2("shinygold", 1)
+
+build_tree2(root2, bag_map_nums(file_input()), templist2)
+
+count2 = {}
+
+dfs2(root2, None)
+
+total = 0
+alist = []
 
 
-#
+print(count_bags(root2))
+
+
+
+
 
 
 
